@@ -64,23 +64,30 @@ struct CameraView: View {
                 }
                 .padding(.horizontal)
                 
-                CameraPreview(session: model.session)
-                    .onAppear {
-                        model.configure()
-                    }
-                    .alert(isPresented: $model.showAlertError) {
-                        Alert(title: Text(model.alertError.title), message: Text(model.alertError.message), dismissButton: .default(Text(model.alertError.primaryButtonTitle), action: {
-                            model.alertError.primaryAction?()
-                        }))
-                    }
-                    .overlay(
-                        Group {
-                            if model.willCapturePhoto {
-                                Color.black
+                GeometryReader { geometry in
+                    CameraPreview(session: model.session)
+                        .onAppear {
+                            model.configure()
+                        }
+                        .alert(isPresented: $model.showAlertError) {
+                            Alert(title: Text(model.alertError.title), message: Text(model.alertError.message), dismissButton: .default(Text(model.alertError.primaryButtonTitle), action: {
+                                model.alertError.primaryAction?()
+                            }))
+                        }
+                        .overlay {
+                            // Red "+" at the center
+                            Text("+")
+                                .font(.system(size: 40))
+                                .foregroundColor(.red)
+                                .padding(.top, geometry.size.height / 2)
+                            Group {
+                                if model.willCapturePhoto {
+                                    Color.black
+                                }
                             }
                         }
-                    )
-                    .animation(/*@START_MENU_TOKEN@*/.easeIn/*@END_MENU_TOKEN@*/, value: model.photo)
+                        .animation(.easeIn, value: model.photo)
+                }
                 
                 ZStack {
                     HStack {
@@ -109,7 +116,6 @@ struct CameraView: View {
             } content: {
                 SettingView()
             }
-
         }
     }
 }
