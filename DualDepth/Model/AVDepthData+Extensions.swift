@@ -79,7 +79,9 @@ extension AVDepthData {
         let depthMap = convertedDepthData.depthDataMap
         
         // Call getDepthReading on the depth map
-        let modifiedDepthMap = depthMap.getDepthReading(sceneView: sceneView, cgPt: cgPt, disparity: disparity)
+//        ChatGPT prompted ARKit code function call
+//        let modifiedDepthMap = depthMap.getDepthReading(sceneView: sceneView, cgPt: cgPt, disparity: disparity)
+        let modifiedDepthMap = depthMap.getDepthReading()
         
         // Convert the resulting depth map to UIImage
         return modifiedDepthMap.uiImage

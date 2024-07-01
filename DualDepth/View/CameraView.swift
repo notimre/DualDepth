@@ -66,7 +66,7 @@ struct CameraView: View {
                 }
                 .padding(.horizontal)
                 
-                GeometryReader { geometry in
+//                GeometryReader { geometry in
                     CameraPreview(session: model.session)
                         .onAppear {
                             model.configure()
@@ -78,10 +78,11 @@ struct CameraView: View {
                         }
                         .overlay {
                             // Red "+" at the center
-                            Text("+")
-                                .font(.system(size: 40))
-                                .foregroundColor(.red)
-                                .padding(.top, geometry.size.height / 2)
+//                            Text("+")
+//                                .font(.system(size: 40))
+//                                .foregroundColor(.red)
+//                                .padding(.top, geometry.size.height / 2)
+                            
                             Group {
                                 if model.willCapturePhoto {
                                     Color.black
@@ -89,7 +90,7 @@ struct CameraView: View {
                             }
                         }
                         .animation(.easeIn, value: model.photo)
-                }
+//                }
                 
                 ZStack {
                     HStack {

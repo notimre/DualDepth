@@ -12,6 +12,8 @@ import UIKit
 import ARKit
 
 var globalDepthValue: Float = 0.0
+let phoneScreenWidth = UIScreen.main.bounds.width
+let phoneScreenHeight = UIScreen.main.bounds.width
 
 extension CVPixelBuffer {
     // convert CVPixelBuffer to UIImage
@@ -25,45 +27,10 @@ extension CVPixelBuffer {
     
     // normalize CVPixelBuffer
     /// https://www.raywenderlich.com/8246240-image-depth-maps-tutorial-for-ios-getting-started
-    func getDepthReading(sceneView: ARSCNView, cgPt: CGPoint, disparity: Float) -> CVPixelBuffer {
-        // Assuming `self` is a CVPixelBuffer
-        var cvPixelBuffer = self
-        
-        let width = CVPixelBufferGetWidth(cvPixelBuffer)
-        let height = CVPixelBufferGetHeight(cvPixelBuffer)
-        
-        CVPixelBufferLockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
-        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(cvPixelBuffer), to: UnsafeMutablePointer<Float>.self)
-        
-        // Calculate depth from disparity
-        let depth = 1 / disparity
-        
-        // Project a point at this depth to screen space
-        let vScreen = sceneView.projectPoint(SCNVector3Make(0, 0, -depth))
-        
-        // Unproject the screen point back to the 3D world
-        let worldPoint = sceneView.unprojectPoint(SCNVector3Make(Float(cgPt.x), Float(cgPt.y), Float(vScreen.z)))
-        
-        // Convert worldPoint.z to Float
-        let depthValue = Float(worldPoint.z)
-        
-        // Save the depth value at the specific location (cgPt)
-        let targetY = Int(cgPt.y)
-        let targetX = Int(cgPt.x)
-        
-        // Calculate the index corresponding to the target location
-        let index = (targetY * width + targetX)
-        
-        // Save the depth value at the calculated index
-        floatBuffer[index] = depthValue
-        globalDepthValue = depthValue
-        
-        CVPixelBufferUnlockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
-        return cvPixelBuffer
-    }
-    
-//    func getDepthReading() -> CVPixelBuffer {
-//        var cvPixelBuffer = self // Assuming `self` is a CVPixelBuffer
+    /// ChatGPT prompted code for ARKit
+//    func getDepthReading(sceneView: ARSCNView, cgPt: CGPoint, disparity: Float) -> CVPixelBuffer {
+//        // Assuming `self` is a CVPixelBuffer
+//        var cvPixelBuffer = self
 //        
 //        let width = CVPixelBufferGetWidth(cvPixelBuffer)
 //        let height = CVPixelBufferGetHeight(cvPixelBuffer)
@@ -71,33 +38,73 @@ extension CVPixelBuffer {
 //        CVPixelBufferLockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
 //        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(cvPixelBuffer), to: UnsafeMutablePointer<Float>.self)
 //        
-////        var minDepth: Float = Float.greatestFiniteMagnitude
-////        var maxDepth: Float = -Float.greatestFiniteMagnitude
-////
-//        // Finding the minimum and maximum depth values
-////        for y in 0..<height {
-////            for x in 0..<width {
-////                let depth = floatBuffer[y * width + x]
-////                minDepth = min(depth, minDepth)
-////                maxDepth = max(depth, maxDepth)
-////            }
-////        }
-//
-//        // Saving a depth value at a specific location
-//        let targetY = height / 3
-//        let targetX = width / 2
+//        // Calculate depth from disparity
+//        let depth = 1 / disparity
+//        
+//        // Project a point at this depth to screen space
+//        let vScreen = sceneView.projectPoint(SCNVector3Make(0, 0, -depth))
+//        
+//        // Unproject the screen point back to the 3D world
+//        let worldPoint = sceneView.unprojectPoint(SCNVector3Make(Float(cgPt.x), Float(cgPt.y), Float(vScreen.z)))
+//        
+//        // Convert worldPoint.z to Float
+//        let depthValue = Float(worldPoint.z)
+//        
+//        // Save the depth value at the specific location (cgPt)
+//        let targetY = Int(cgPt.y)
+//        let targetX = Int(cgPt.x)
 //        
 //        // Calculate the index corresponding to the target location
 //        let index = (targetY * width + targetX)
 //        
 //        // Save the depth value at the calculated index
-////        floatBuffer[index] = globalDepthValue
-//        globalDepthValue = floatBuffer[index]
-//        testNumber += 1
-//        
+//        floatBuffer[index] = depthValue
+//        globalDepthValue = depthValue
+//
 //        CVPixelBufferUnlockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
 //        return cvPixelBuffer
 //    }
+    // End of ChatGPT prompted code for ARKit
+    
+    func getDepthReading() -> CVPixelBuffer {
+        var cvPixelBuffer = self // Assuming `self` is a CVPixelBuffer
+        
+        let width = CVPixelBufferGetWidth(cvPixelBuffer)
+        let height = CVPixelBufferGetHeight(cvPixelBuffer)
+        
+        CVPixelBufferLockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(cvPixelBuffer), to: UnsafeMutablePointer<Float>.self)
+        
+//        var minDepth: Float = Float.greatestFiniteMagnitude
+//        var maxDepth: Float = -Float.greatestFiniteMagnitude
+//
+        // Finding the minimum and maximum depth values
+//        for y in 0..<height {
+//            for x in 0..<width {
+//                let depth = floatBuffer[y * width + x]
+//                minDepth = min(depth, minDepth)
+//                maxDepth = max(depth, maxDepth)
+//            }
+//        }
+
+        // Saving a depth value at a specific location
+        let targetY = height / 3
+        let targetX = width / 2
+
+        // Test
+//        let targetY = phoneScreenHeight / 2
+//        let targetX = phoneScreenWidth / 2
+        //end test
+
+        // Calculate the index corresponding to the target location
+        let index = Int(targetY + targetX)
+        
+        // Save the depth value at the calculated index
+        globalDepthValue = floatBuffer[index]
+        
+        CVPixelBufferUnlockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+        return cvPixelBuffer
+    }
 
     
     // convert CVPixelBuffer to Array
