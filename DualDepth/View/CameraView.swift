@@ -54,17 +54,15 @@ struct CameraView: View {
             
             VStack {
                 HStack(spacing: 16) {
+                    Text("depthValue: \(globalDepthValue)")
+                        .foregroundStyle(.white)
                     Label("Disparity", systemImage: "square.stack.3d.forward.dottedline")
                         .labelStyle(.cameraLabel)
                         .foregroundColor(model.isDepthMapAvailable ? .yellow : .secondary)
                     Label("LiDAR", systemImage: "square.dotted")
                         .labelStyle(.cameraLabel)
                         .foregroundColor(model.isLiDARAvailable ? .yellow : .secondary)
-                    Text("depthValue: \(globalDepthValue)")
-                    Text("test: \(testNumber)")
-            
                     Spacer()
-                    
                 }
                 .padding(.horizontal)
                 
