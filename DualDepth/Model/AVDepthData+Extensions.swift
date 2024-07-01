@@ -51,7 +51,7 @@ extension AVDepthData {
     // Convert AVDepthData to UIImage
     var asDepthMapImage: UIImage? {
         let convertedDepthData = self.asDepthFloat32 // Convert to DepthFloat32
-        let depthMap = convertedDepthData.depthDataMap // Get depth map
+        let depthMap = convertedDepthData.depthDataMap.getDepthReading() // Get depth map
         return depthMap.uiImage // Convert depth map to UIImage
     }
 }

@@ -60,7 +60,11 @@ struct CameraView: View {
                     Label("LiDAR", systemImage: "square.dotted")
                         .labelStyle(.cameraLabel)
                         .foregroundColor(model.isLiDARAvailable ? .yellow : .secondary)
+                    Text("depthValue: \(globalDepthValue)")
+                    Text("test: \(testNumber)")
+            
                     Spacer()
+                    
                 }
                 .padding(.horizontal)
                 

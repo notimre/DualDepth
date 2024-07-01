@@ -84,7 +84,6 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
             // depth data
             if let depthData = photo.depthData {
                 print("📷: \(depthData.description)")
-                
                 // depth map image
                 depthMapImage = depthData.asDepthMapImage
             }

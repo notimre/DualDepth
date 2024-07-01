@@ -10,6 +10,10 @@ import CoreVideo
 import CoreImage
 import UIKit
 
+var globalDepthValue: Float = 0.0
+var testNumber: Float = 0.0
+
+
 extension CVPixelBuffer {
     // convert CVPixelBuffer to UIImage
     var uiImage: UIImage? {
@@ -22,8 +26,9 @@ extension CVPixelBuffer {
     
     // normalize CVPixelBuffer
     /// https://www.raywenderlich.com/8246240-image-depth-maps-tutorial-for-ios-getting-started
-    func normalize() -> CVPixelBuffer {
-        let cvPixelBuffer = self
+
+    func getDepthReading() -> CVPixelBuffer {
+        var cvPixelBuffer = self // Assuming `self` is a CVPixelBuffer
         
         let width = CVPixelBufferGetWidth(cvPixelBuffer)
         let height = CVPixelBufferGetHeight(cvPixelBuffer)
@@ -31,28 +36,33 @@ extension CVPixelBuffer {
         CVPixelBufferLockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
         let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(cvPixelBuffer), to: UnsafeMutablePointer<Float>.self)
         
-        var minPixel: Float = 1.0
-        var maxPixel: Float = 0.0
+//        var minDepth: Float = Float.greatestFiniteMagnitude
+//        var maxDepth: Float = -Float.greatestFiniteMagnitude
+//
+        // Finding the minimum and maximum depth values
+//        for y in 0..<height {
+//            for x in 0..<width {
+//                let depth = floatBuffer[y * width + x]
+//                minDepth = min(depth, minDepth)
+//                maxDepth = max(depth, maxDepth)
+//            }
+//        }
+
+        // Saving a depth value at a specific location
+        let targetY = height / 3
+        let targetX = width / 2
         
-        for y in stride(from: 0, to: height, by: 1) {
-          for x in stride(from: 0, to: width, by: 1) {
-            let pixel = floatBuffer[y * width + x]
-            minPixel = min(pixel, minPixel)
-            maxPixel = max(pixel, maxPixel)
-          }
-        }
+        // Calculate the index corresponding to the target location
+        let index = (targetY * width + targetX)
         
-        let range = maxPixel - minPixel
-        for y in stride(from: 0, to: height, by: 1) {
-          for x in stride(from: 0, to: width, by: 1) {
-            let pixel = floatBuffer[y * width + x]
-            floatBuffer[y * width + x] = (pixel - minPixel) / range
-          }
-        }
+        // Save the depth value at the calculated index
+        floatBuffer[index] = globalDepthValue
+        testNumber += 1
         
         CVPixelBufferUnlockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
         return cvPixelBuffer
     }
+
     
     // convert CVPixelBuffer to Array
     var array: Array<Array<Float32>> {
@@ -86,3 +96,61 @@ private func reshape(from array: [Float32], width: Int, height: Int) -> [[Float3
     let reshapedArray = mask.map { $0.compactMap { _ in iter.next() } }
     return reshapedArray
 }
+
+
+//    func normalize() -> CVPixelBuffer {
+//        let cvPixelBuffer = self
+//
+//        let width = CVPixelBufferGetWidth(cvPixelBuffer)
+//        let height = CVPixelBufferGetHeight(cvPixelBuffer)
+//
+//        CVPixelBufferLockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+//        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(cvPixelBuffer), to: UnsafeMutablePointer<Float>.self)
+//
+//        var minPixel: Float = 1.0
+//        var maxPixel: Float = 0.0
+//
+//        for y in stride(from: 0, to: height, by: 1) {
+//          for x in stride(from: 0, to: width, by: 1) {
+//            let pixel = floatBuffer[y * width + x]
+//            minPixel = min(pixel, minPixel)
+//            maxPixel = max(pixel, maxPixel)
+//          }
+//        }
+//
+//        let range = maxPixel - minPixel
+//        for y in stride(from: 0, to: height, by: 1) {
+//          for x in stride(from: 0, to: width, by: 1) {
+//            let pixel = floatBuffer[y * width + x]
+//            floatBuffer[y * width + x] = (pixel - minPixel) / range
+//          }
+//        }
+//
+//        CVPixelBufferUnlockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+//        return cvPixelBuffer
+//    }
+//    /////////////////////////////////////////////////////////////////////
+//    func normalize() -> CVPixelBuffer {
+//        let cvPixelBuffer = self
+//
+//        let width = CVPixelBufferGetWidth(cvPixelBuffer)
+//        let height = CVPixelBufferGetHeight(cvPixelBuffer)
+//
+//        CVPixelBufferLockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+//        let floatBuffer = unsafeBitCast(CVPixelBufferGetBaseAddress(cvPixelBuffer), to: UnsafeMutablePointer<Float>.self)
+//
+//        var minPixel: Float = 1.0
+//        var maxPixel: Float = 0.0
+//
+//        // beginning of saving here
+//
+//        let targetY = height / 3
+//        let targetX = width / 2
+//
+//        let pixel = floatBuffer[targetY * width + targetX]
+//
+//        // end of saving here
+//
+//        CVPixelBufferUnlockBaseAddress(cvPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+//        return cvPixelBuffer
+//    }
